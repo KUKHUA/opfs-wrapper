@@ -281,7 +281,8 @@ class OPFSFolder {
         }
     }
 
-    hasFile(name){
+    async hasFile(name){
+        await this.indexFiles();
         return !!this.files[name];
     }
 
@@ -293,6 +294,15 @@ class OPFSFolder {
             throw new Error(`Unable to delete folder: ${e.message}`);
         }
     }
+
+    async createFolder(name){
+        try {
+            let folderHandle = await this.folderHandle.getDirectoryHandle(name, { create: true });
+            return new OPFSFolder(folderHandle);
+        } catch (e) {
+            throw new Error(`Unable to create folder ${name}: ${e.message}`);
+        }
+    }   
 
     async downloadAll(){
         try {
